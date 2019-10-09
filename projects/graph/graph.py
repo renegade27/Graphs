@@ -20,6 +20,7 @@ class Graph:
         if v1 in self.vertices and v2 in self.vertices:
             self.vertices[v1].add(v2)
         else:
+            # If one of the verts of the edge doesn't exist, can't make that edge
             raise KeyError('Cant create edge, one or more given vertices doesnt exist')
 
     def bft(self, starting_vertex):
@@ -29,12 +30,18 @@ class Graph:
         """
         queue = Queue()
         visited = set()
+        # Enqueue our starting vert
         queue.enqueue(starting_vertex)
+        # While we still have verts to work with
         while queue.size() > 0:
+            # Dequeue next vert
             vertex = queue.dequeue()
+            # Check to see if we've found it yet
             if vertex not in visited:
+                # If we haven't, then add it
                 visited.add(vertex)
                 print(vertex)
+                # Enqueue verts connected to that vert, and repeat the process
                 for next_vert in self.vertices[vertex]:
                     queue.enqueue(next_vert)
     
@@ -45,13 +52,20 @@ class Graph:
         """
         stack = Stack()
         visited = set()
+        # Push our starting vert to the stack
         stack.push(starting_vertex)
+        # While we still have verts in the stack
         while stack.size() > 0:
+            # Pop off vert on top
             vertex = stack.pop()
+            # If we haven't analyzed that vert yet
             if vertex not in visited:
+                # Add the vert
                 visited.add(vertex)
                 print(vertex)
+                # Iterate through that verts connections
                 for next_vert in self.vertices[vertex]:
+                    # Push vert to stack, and repeat the process
                     stack.push(next_vert)
 
     def dft_recursive(self, starting_vertex, visited=set()):
@@ -61,9 +75,13 @@ class Graph:
         This should be done using recursion.
         """
         print(starting_vertex)
+        # Add the vert we're starting on upon this runtime of the func
         visited.add(starting_vertex)
+        # For all children in our starting vert
         for child_vertex in self.vertices[starting_vertex]:
+            # Check to see if child/connected vert is in visited
             if child_vertex not in visited:
+                # If it isn't, call func with the child vert as starting_vert and bubble our visited set into next call
                 self.dft_recursive(child_vertex, visited)
 
     def bfs(self, starting_vertex, destination_vertex):
@@ -74,17 +92,29 @@ class Graph:
         """
         qq = Queue()
         visited = set()
+        # Enqueue our starting vertex as a path
         qq.enqueue([starting_vertex])
+        # While there are paths to make/check
         while qq.size() > 0:
+            # Grab our path
             path = qq.dequeue()
+            # Grab last vertex in path
             vertex = path[-1]
+            # If our vertex hasn't been found yet
             if vertex not in visited:
+                # If that vert is our destination
                 if vertex == destination_vertex:
+                    # We have found our path list
                     return path
+                # Else, add our new vert to visited
                 visited.add(vertex)
+                # Iterate through verts connected to our new vert
                 for next_vert in self.vertices[vertex]:
+                    # Make a copy of the current path
                     new_path = list(path)
+                    # Add the next vert to the path
                     new_path.append(next_vert)
+                    # Enqueue our new possible path
                     qq.enqueue(new_path)
 
     def dfs(self, starting_vertex, destination_vertex):
@@ -93,10 +123,11 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
+        # Same explanation as BFS but with stack now for depth-first
         stack = Stack()
         visited = set()
         stack.push([starting_vertex])
-        while qq.size() > 0:
+        while stack.size() > 0:
             path = stack.pop()
             vertex = path[-1]
             if vertex not in visited:
